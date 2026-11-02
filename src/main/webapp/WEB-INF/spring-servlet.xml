@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/aop 
+  http://www.springframework.org/schema/aop/spring-aop.xsd
+  http://www.springframework.org/schema/context 
+  http://www.springframework.org/schema/context/spring-context.xsd
+  http://www.springframework.org/schema/tx 
+  http://www.springframework.org/schema/tx/spring-tx.xsd
+  http://www.springframework.org/schema/mvc 
+  http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+  
+  
+  
+  <!-- yaha pe hum ek configuration file likhenge jisme database username and password email and paassword uska variable use honge  -->
+  
+  <context:property-placeholder location="file:///D:/DMS-Config/secrets.properties"/>
+  
+  <!-- packages hai jaha se class ke throw haam data store or mapping karenge -->
+  
+  <context:component-scan base-package="com.controller"/>
+  <context:component-scan base-package="com.model"/>
+  <context:component-scan base-package="com.dao"/>
+  <context:component-scan base-package="com.service"/>
+  
+  
+  <mvc:resources mapping="/images/**" location="/images/" /> 
+  
+ <mvc:resources mapping="/upload/**" location="file:///D:/upload/"/>
+ 
+<mvc:annotation-driven />
+  
+  <!-- View resolver -->
+  
+  <bean class=" org.springframework.web.servlet.view.InternalResourceViewResolver">
+  
+  <property name="prefix" value="/WEB-INF/view/"></property>
+  <property name="suffix" value=".jsp"></property>
+  
+  </bean>
+  
+  <!-- data source -->
+	<tx:annotation-driven transaction-manager="hibernateTransactionManager" />
+	<!-- <tx:annotation-driven /> -->
+
+	<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource"
+		name="ds">
+
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/db_document_management_system" />
+		<property name="username" value="${DB_USERNAME}" />
+		<property name="password" value="" />
+
+	</bean>
+
+	<bean class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		name="sessionFactory">
+		<!-- data source -->
+		<property name="dataSource" ref="ds"></property>
+
+		<!-- Hibernate properties -->
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+
+		<!-- annotated classes -->
+		<property name="annotatedClasses">
+			<list>
+				<value>com.model.UserRegistration</value>
+				<value>com.model.UserDocuments</value>
+				
+				
+			</list>
+		</property>
+	</bean>
+
+
+
+	<bean class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+		name="hibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	
+	
+	 <bean id="multipartResolver"   
+class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/> 
+   
+  <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+	  	<property name="host" value="smtp.gmail.com" />  
+	    <property name="username" value="${MAIL_USERNAME}" />  
+	    <property name="password" value="${MAIL_PASSWORD}" />  
+	    <property name="javaMailProperties">  
+	       <props>  
+	              <prop key="mail.smtp.auth">true</prop>  
+	              <prop key="mail.smtp.socketFactory.port">465</prop>  
+	              <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>  
+	              <prop key="mail.smtp.port">465</prop>  
+	        </props>  
+	    </property>  
+	</bean>
+  
+  
+  </beans>
